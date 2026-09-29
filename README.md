@@ -4,8 +4,6 @@ Des widgets pour le bureau Windows : horloge, post-it, météo, calendrier, musi
 
 Les widgets restent **collés au bureau**, derrière tes fenêtres, sans jamais se chevaucher. Ils se lancent au démarrage de Windows et se règlent avec leur bouton ✏ **Modifier**.
 
-> 🖼️ *Ajoute ici une capture de ton bureau avec quelques widgets, par exemple `docs/apercu.png`.*
-
 ![Windows 10 / 11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
 ![Version](https://img.shields.io/badge/version-2.6.0-4F8CFF)
@@ -184,7 +182,3 @@ Le widget **Presse-papiers** garde son historique uniquement en mémoire, jamais
 - **Températures** : seuls les capteurs de la carte mère (ACPI) sont lisibles sans droits administrateur. Le processeur cœur par cœur et la carte graphique ne sont pas disponibles.
 - **Agenda** : les répétitions courantes sont gérées (tous les jours, semaines, mois, ans). Les règles complexes, comme « le 2e mardi du mois », ne le sont pas.
 - **Déplacement** : pendant qu'on le déplace, un widget peut passer au-dessus des autres. Il se range seulement quand on le lâche.
-
-## 📄 Licence
-
-À définir. Si tu veux que d'autres puissent réutiliser le code, la licence [MIT](https://choosealicense.com/licenses/mit/) est un choix simple et courant.
