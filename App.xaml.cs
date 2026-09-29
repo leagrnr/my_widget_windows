@@ -103,13 +103,57 @@ public partial class App : Application
     {
         if (!Config.SansChevauchement || _quitte || !w.IsLoaded || w.ActualWidth == 0) return;
         var zone = w.Zone;
-        var place = Placement.Trouver(zone.Location, zone.Size, Obstacles(w), Placement.Ecrans(w));
+        var autres = Obstacles(w);
+        var ecrans = Placement.Ecrans(w);
+        if (Placement.Libre(zone, autres, ecrans)) return;
+        if (Config.Retrecir && w.Config.Type != "animal" && Retrecir(w, zone, autres, ecrans)) return;
+        var place = Placement.Trouver(zone.Location, zone.Size, autres, ecrans);
         if (Math.Abs(place.X - zone.X) < 0.5 && Math.Abs(place.Y - zone.Y) < 0.5) return;
         w.Left += place.X - zone.X;
         w.Top += place.Y - zone.Y;
         w.Config.X = w.Left;
         w.Config.Y = w.Top;
         Sauver();
+    }
+
+    bool Retrecir(WidgetWindow w, Rect zone, List<Rect> autres, List<Rect> ecrans)
+    {
+        const double MargesFixes = 8;
+        double depart = w.Echelle;
+        if (depart <= WidgetWindow.EchelleMin) return false;
+
+        Rect Reduite(int coin, double echelle)
+        {
+            double k = echelle / depart;
+            double l = (zone.Width - MargesFixes) * k + MargesFixes;
+            double h = (zone.Height - MargesFixes) * k + MargesFixes;
+            double x = coin is 1 or 3 ? zone.Right - l : zone.Left;
+            double y = coin >= 2 ? zone.Bottom - h : zone.Top;
+            return new Rect(x, y, l, h);
+        }
+
+        double meilleure = 0;
+        Rect choix = default;
+        for (int coin = 0; coin < 4; coin++)
+        {
+            if (!Placement.Libre(Reduite(coin, WidgetWindow.EchelleMin), autres, ecrans)) continue;
+            double bas = WidgetWindow.EchelleMin, haut = depart;
+            for (int i = 0; i < 14; i++)
+            {
+                double milieu = (bas + haut) / 2;
+                if (Placement.Libre(Reduite(coin, milieu), autres, ecrans)) bas = milieu; else haut = milieu;
+            }
+            if (bas > meilleure) { meilleure = bas; choix = Reduite(coin, bas); }
+        }
+        if (meilleure < WidgetWindow.EchelleMin) return false;
+
+        w.ChangerEchelle(Math.Floor(meilleure * 100) / 100);
+        w.Left += choix.X - zone.X;
+        w.Top += choix.Y - zone.Y;
+        w.Config.X = w.Left;
+        w.Config.Y = w.Top;
+        Sauver();
+        return true;
     }
 
     public void Aimanter(WidgetWindow w, double seuil = 20)

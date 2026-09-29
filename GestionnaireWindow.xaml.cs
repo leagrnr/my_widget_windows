@@ -77,6 +77,10 @@ public partial class GestionnaireWindow : Window
         CaseMagnetisme.Unchecked += (_, _) => { config.Magnetisme = false; app.Sauver(); };
         BoutonAligner.Click += (_, _) => app.AlignerTout();
 
+        CaseRetrecir.IsChecked = config.Retrecir;
+        CaseRetrecir.Checked += (_, _) => { config.Retrecir = true; app.Sauver(); };
+        CaseRetrecir.Unchecked += (_, _) => { config.Retrecir = false; app.Sauver(); };
+
         CaseChevauchement.IsChecked = config.SansChevauchement;
         CaseChevauchement.Checked += (_, _) => { config.SansChevauchement = true; app.Sauver(); app.RangerTout(); };
         CaseChevauchement.Unchecked += (_, _) => { config.SansChevauchement = false; app.Sauver(); };

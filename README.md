@@ -6,7 +6,7 @@ Les widgets restent **collés au bureau**, toujours derrière tes applications, 
 
 ![Windows 10 / 11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
-![Version](https://img.shields.io/badge/version-2.11.0-4F8CFF)
+![Version](https://img.shields.io/badge/version-2.13.0-4F8CFF)
 
 ---
 
@@ -15,7 +15,7 @@ Les widgets restent **collés au bureau**, toujours derrière tes applications, 
 - **36 widgets** répartis en 6 catégories (liste ci-dessous)
 - **Collés au bureau** : toujours derrière tes applications (jamais par-dessus), visibles avec `Win` + `D`, invisibles dans `Alt` + `Tab`
 - **Alignement automatique** : un widget lâché près d'un autre s'aimante sur ses bords, ou se place juste à côté avec un espace régulier. Le bouton *Aligner tous les widgets* redresse toute la disposition d'un coup.
-- **Pas de chevauchement** : un widget lâché sur un autre se décale vers la place libre la plus proche
+- **Pas de chevauchement** : un widget lâché ou agrandi contre un autre **rétrécit** juste assez pour tenir (jusqu'à 50 %). S'il n'y a vraiment pas la place, il se décale vers l'espace libre le plus proche. Tu peux choisir de toujours le décaler plutôt que le rétrécir.
 - **Toujours dans l'écran** : un widget ne peut pas sortir de l'écran ni passer sous la barre des tâches. Il bute contre les bords quand tu le déplaces, et il est ramené à l'intérieur s'il grandit trop près d'un bord ou après un changement d'écran.
 - **Taille libre** : tire le coin en bas à droite d'un widget, ou `Ctrl` + molette (de 50 % à 300 %)
 - **Bouton ✏ Modifier** sur chaque widget (visible au survol) : réglages, taille, opacité, verrouillage, suppression
@@ -89,7 +89,7 @@ Le programme te demande si tu veux garder tes widgets et leurs réglages, pour l
 |---|---|
 | Ouvrir le gestionnaire | Clic sur l'icône **Mes Widgets** près de l'horloge Windows (parfois cachée derrière la flèche **^**) |
 | Ajouter un widget | Gestionnaire › clic sur une tuile, ou clic droit sur l'icône › *Ajouter un widget* |
-| Déplacer un widget | Le glisser avec la souris : il s'aimante aux widgets voisins et aux bords de l'écran |
+| Déplacer un widget | Attraper la **poignée** en haut au centre (visible au survol), ou glisser le widget n'importe où : il s'aimante aux widgets voisins et aux bords de l'écran |
 | Aligner toute la disposition | Gestionnaire › *Disposition et sauvegarde* › **Aligner tous les widgets** |
 | Agrandir / réduire un widget | Tirer le coin en bas à droite (visible au survol), ou `Ctrl` + molette |
 | Régler un widget | Passer la souris dessus, puis clic sur le bouton ✏ en haut à droite (ou clic droit) |
@@ -230,6 +230,8 @@ Le widget **Presse-papiers** garde son historique uniquement en mémoire, jamais
 
 | Version | Nouveautés |
 |---|---|
+| **2.13** | Poignée de déplacement en haut de chaque widget |
+| **2.12** | Un widget qui manque de place rétrécit au lieu d'être déplacé |
 | **2.11** | Les widgets ne peuvent plus sortir de l'écran ni passer sous la barre des tâches |
 | **2.10** | Fenêtres de configuration redessinées (thème sombre / clair) et plus jamais au premier plan |
 | **2.9** | Widget Valorant |

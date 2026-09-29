@@ -167,6 +167,8 @@
       <CheckBox x:Name="CaseDemarrage" Content="Lancer Mes Widgets au démarrage de Windows" VerticalContentAlignment="Center"/>
       <CheckBox x:Name="CaseMagnetisme" Content="Aimanter les widgets (alignement automatique en les lâchant)" VerticalContentAlignment="Center" Margin="0,10,0,0"
                 ToolTip="Un widget lâché près d'un autre s'aligne sur ses bords ou se place juste à côté"/>
+      <CheckBox x:Name="CaseRetrecir" Content="Rétrécir un widget qui manque de place (plutôt que le déplacer)" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                ToolTip="Un widget lâché ou agrandi contre un autre se réduit juste assez pour tenir (jusqu'à 50 %)"/>
       <CheckBox x:Name="CaseChevauchement" Content="Empêcher les widgets de se chevaucher" VerticalContentAlignment="Center" Margin="0,10,0,0"
                 ToolTip="Un widget lâché sur un autre se décale automatiquement vers la place libre la plus proche"/>
       <StackPanel Orientation="Horizontal" Margin="0,14,0,0">

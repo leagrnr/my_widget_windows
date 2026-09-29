@@ -27,7 +27,7 @@ public abstract class WidgetWindow : Window
     protected const string Icones = "Segoe Fluent Icons, Segoe MDL2 Assets";
 
     static readonly (string Nom, double Valeur)[] Tailles = { ("Petite", 0.8), ("Normale", 1), ("Grande", 1.25), ("Très grande", 1.5), ("Énorme", 2) };
-    const double EchelleMin = 0.5, EchelleMax = 3;
+    public const double EchelleMin = 0.5, EchelleMax = 3;
     static readonly (string Nom, double Valeur)[] Opacites = { ("100 %", 1), ("85 %", 0.85), ("70 %", 0.7), ("50 %", 0.5) };
 
     readonly ContextMenu _menu = new();
@@ -62,18 +62,10 @@ public abstract class WidgetWindow : Window
         ContextMenu = _menu;
         ContextMenuOpening += (_, _) => ConstruireMenu();
 
-        MouseLeftButtonDown += (_, e) =>
+        MouseLeftButtonDown += (_, _) =>
         {
             if (Verrouille) { Clic(); return; }
-            double x = Left, y = Top;
-            try { DragMove(); } catch (InvalidOperationException) { return; }
-            if (Math.Abs(Left - x) < 1 && Math.Abs(Top - y) < 1) { Clic(); return; }
-            Config.X = Left;
-            Config.Y = Top;
-            App.Instance.Sauver();
-            if (App.Instance.Config.Magnetisme) App.Instance.Aimanter(this);
-            App.Instance.Ranger(this);
-            Bureau.AuFond(_hwnd);
+            if (!Deplacer()) Clic();
         };
 
         Loaded += (_, _) => App.Instance.Ranger(this);
@@ -146,8 +138,27 @@ public abstract class WidgetWindow : Window
 
     FrameworkElement _racine;
     Border _poignee;
+    Border _barre;
     Border _modifier;
     double _echelle = 1;
+
+    bool Deplacer()
+    {
+        double x = Left, y = Top;
+        try { DragMove(); } catch (InvalidOperationException) { return false; }
+        if (Math.Abs(Left - x) < 1 && Math.Abs(Top - y) < 1) return false;
+        Config.X = Left;
+        Config.Y = Top;
+        App.Instance.Sauver();
+        if (App.Instance.Config.Magnetisme) App.Instance.Aimanter(this);
+        App.Instance.Ranger(this);
+        Bureau.AuFond(_hwnd);
+        return true;
+    }
+
+    public double Echelle => _echelle;
+
+    public void ChangerEchelle(double echelle) => Redimensionner(echelle, sauver: true);
 
     void AppliquerApparence()
     {
@@ -208,8 +219,37 @@ public abstract class WidgetWindow : Window
         _modifier.MouseLeftButtonDown += (_, e) => e.Handled = true;
         _modifier.MouseLeftButtonUp += (_, e) => { e.Handled = true; OuvrirMenu(); };
 
+        var trait = new Border
+        {
+            Width = 40, Height = 5,
+            CornerRadius = new CornerRadius(2.5),
+            Background = Pale,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        _barre = new Border
+        {
+            Width = 90, Height = 16,
+            Background = Brushes.Transparent,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(0, 11, 0, 0),
+            Cursor = Cursors.SizeAll,
+            Opacity = 0,
+            ToolTip = "Glisser pour déplacer",
+            Child = trait,
+        };
+        _barre.MouseEnter += (_, _) => trait.Background = Accent;
+        _barre.MouseLeave += (_, _) => trait.Background = Pale;
+        _barre.MouseLeftButtonDown += (_, e) =>
+        {
+            e.Handled = true;
+            if (!Verrouille) Deplacer();
+        };
+
         var conteneur = new Grid();
         conteneur.Children.Add(_racine);
+        conteneur.Children.Add(_barre);
         conteneur.Children.Add(_poignee);
         conteneur.Children.Add(_modifier);
         Content = conteneur;
@@ -217,11 +257,14 @@ public abstract class WidgetWindow : Window
         MouseEnter += (_, _) =>
         {
             _poignee.Opacity = Verrouille ? 0 : 1;
+            _barre.Opacity = Verrouille ? 0 : 1;
+            _barre.IsHitTestVisible = !Verrouille;
             _modifier.Opacity = 1;
         };
         MouseLeave += (_, _) =>
         {
             if (!_poignee.IsMouseCaptured) _poignee.Opacity = 0;
+            _barre.Opacity = 0;
             if (!_menu.IsOpen) _modifier.Opacity = 0;
         };
         _menu.Closed += (_, _) => { if (!IsMouseOver) _modifier.Opacity = 0; };

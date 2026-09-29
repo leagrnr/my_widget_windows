@@ -24,6 +24,7 @@ public class AppConfig
     public string Fond { get; set; } = "normal";
     public bool SansChevauchement { get; set; } = true;
     public bool Magnetisme { get; set; } = true;
+    public bool Retrecir { get; set; } = true;
     public string Depot { get; set; } = "";
     public List<WidgetConfig> Widgets { get; set; } = new();
 }
