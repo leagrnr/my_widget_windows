@@ -1,0 +1,13 @@
+# Fichiers générés par la compilation
+bin/
+obj/
+
+# Installateur (80 Mo) : à joindre aux Releases GitHub, pas au dépôt
+dist/
+
+# Éditeurs
+.vs/
+.vscode/
+*.user
+*.suo
+.idea/

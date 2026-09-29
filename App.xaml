@@ -1,0 +1,102 @@
+<Application x:Class="MesWidgets.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+  <Application.Resources>
+    <SolidColorBrush x:Key="MenuFond" Color="#F21E2028"/>
+    <SolidColorBrush x:Key="MenuTexte" Color="White"/>
+    <SolidColorBrush x:Key="MenuTexteDoux" Color="#B0FFFFFF"/>
+    <SolidColorBrush x:Key="MenuSurvol" Color="#24FFFFFF"/>
+    <SolidColorBrush x:Key="MenuBordure" Color="#30FFFFFF"/>
+    <SolidColorBrush x:Key="MenuAccent" Color="#4F8CFF"/>
+    <FontFamily x:Key="Icones">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <Style TargetType="ContextMenu">
+      <Setter Property="OverridesDefaultStyle" Value="True"/>
+      <Setter Property="HasDropShadow" Value="True"/>
+      <Setter Property="FontFamily" Value="Segoe UI"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ContextMenu">
+            <Border Background="{DynamicResource MenuFond}" BorderBrush="{DynamicResource MenuBordure}" BorderThickness="1"
+                    CornerRadius="10" Padding="5" Margin="0,0,10,10">
+              <Border.Effect>
+                <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.35"/>
+              </Border.Effect>
+              <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
+      <Setter Property="OverridesDefaultStyle" Value="True"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Separator">
+            <Border Height="1" Margin="10,5" Background="{DynamicResource MenuBordure}"/>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style TargetType="MenuItem">
+      <Setter Property="OverridesDefaultStyle" Value="True"/>
+      <Setter Property="Foreground" Value="{DynamicResource MenuTexte}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="MenuItem">
+            <Border x:Name="Fond" Background="Transparent" CornerRadius="6" Padding="10,7,12,7" MinWidth="210">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="26"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter x:Name="Icone" ContentSource="Icon" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="Coche" Text="&#xE73E;" FontFamily="{StaticResource Icones}" FontSize="12"
+                           Foreground="{DynamicResource MenuAccent}" VerticalAlignment="Center" Visibility="Collapsed"/>
+                <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                <TextBlock x:Name="Fleche" Grid.Column="2" Text="&#xE76C;" FontFamily="{StaticResource Icones}" FontSize="10"
+                           Foreground="{DynamicResource MenuTexteDoux}" Margin="14,0,0,0" VerticalAlignment="Center" Visibility="Collapsed"/>
+
+                <Popup x:Name="PART_Popup" Placement="Right" HorizontalOffset="8" VerticalOffset="-12"
+                       IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                       AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                  <Border Background="{DynamicResource MenuFond}" BorderBrush="{DynamicResource MenuBordure}" BorderThickness="1"
+                          CornerRadius="10" Padding="5" Margin="0,0,10,10">
+                    <Border.Effect>
+                      <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.35"/>
+                    </Border.Effect>
+                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                  </Border>
+                </Popup>
+              </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsHighlighted" Value="True">
+                <Setter TargetName="Fond" Property="Background" Value="{DynamicResource MenuSurvol}"/>
+              </Trigger>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="Coche" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="Icone" Property="Visibility" Value="Collapsed"/>
+              </Trigger>
+              <Trigger Property="Role" Value="SubmenuHeader">
+                <Setter TargetName="Fleche" Property="Visibility" Value="Visible"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource MenuTexteDoux}"/>
+                <Setter Property="Cursor" Value="Arrow"/>
+                <Setter Property="FontSize" Value="11.5"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Application.Resources>
+</Application>

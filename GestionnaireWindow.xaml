@@ -1,0 +1,183 @@
+<Window x:Class="MesWidgets.GestionnaireWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Mes Widgets" Width="600" Height="720" MinWidth="500" MinHeight="460"
+        WindowStartupLocation="CenterScreen" Background="#F4F5F7"
+        FontFamily="Segoe UI" FontSize="14" Foreground="#1F2328">
+
+  <Window.Resources>
+    <SolidColorBrush x:Key="Gris" Color="#667085"/>
+
+    <Style x:Key="Tuile" TargetType="Button">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="BorderBrush" Value="#E3E5E8"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="b" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="1" CornerRadius="10" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="b" Property="BorderBrush" Value="#4F6BFF"/>
+                <Setter TargetName="b" Property="Background" Value="#F5F7FF"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="b" Property="Background" Value="#E8ECFF"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="Bouton" TargetType="Button">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Padding" Value="12,6"/>
+      <Setter Property="Margin" Value="0,0,8,8"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="b" Background="{TemplateBinding Background}" BorderBrush="#D6D9DE" BorderThickness="1"
+                    CornerRadius="8" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="b" Property="BorderBrush" Value="#4F6BFF"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="b" Property="Opacity" Value="0.5"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="Lien" TargetType="Button">
+      <Setter Property="Foreground" Value="#3B5BDB"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Padding" Value="10,5"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="b" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}">
+              <ContentPresenter VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="b" Property="Background" Value="#EEF1FB"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="LienRouge" TargetType="Button" BasedOn="{StaticResource Lien}">
+      <Setter Property="Foreground" Value="#C92A2A"/>
+    </Style>
+
+    <Style x:Key="Section" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Foreground" Value="{StaticResource Gris}"/>
+      <Setter Property="Margin" Value="0,26,0,8"/>
+    </Style>
+    <Style x:Key="Etiquette" TargetType="TextBlock">
+      <Setter Property="Width" Value="150"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+  </Window.Resources>
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,24,28,24">
+      <TextBlock Text="Mes Widgets" FontSize="26" FontWeight="SemiBold"/>
+      <TextBlock Margin="0,4,0,0" TextWrapping="Wrap" Foreground="{StaticResource Gris}"
+                 Text="Ajoute des widgets sur ton bureau. Glisse-les pour les déplacer, et passe la souris dessus puis clique sur ✏ pour les régler."/>
+
+      <Border x:Name="BandeauMaj" Visibility="Collapsed" Background="#E8F0FF" CornerRadius="10" Padding="14,10" Margin="0,16,0,0">
+        <DockPanel>
+          <Button x:Name="BoutonInstallerMaj" DockPanel.Dock="Right" Content="Installer" Style="{StaticResource Bouton}" Margin="0"/>
+          <TextBlock x:Name="TexteMaj" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </DockPanel>
+      </Border>
+
+      <TextBlock Text="AJOUTER UN WIDGET" Style="{StaticResource Section}" Margin="0,22,0,4"/>
+      <StackPanel x:Name="ListeTypes"/>
+
+      <TextBlock Text="SUR MON BUREAU" Style="{StaticResource Section}"/>
+      <Border x:Name="CadreListe" Background="White" CornerRadius="10" BorderBrush="#E3E5E8" BorderThickness="1">
+        <StackPanel x:Name="ListeWidgets"/>
+      </Border>
+      <TextBlock x:Name="Vide" Text="Aucun widget pour l'instant : clique sur une tuile au-dessus."
+                 Foreground="{StaticResource Gris}" Margin="2,4,0,0"/>
+
+      <TextBlock Text="APPARENCE" Style="{StaticResource Section}"/>
+      <Border Background="White" CornerRadius="10" BorderBrush="#E3E5E8" BorderThickness="1" Padding="16,12">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,4">
+            <TextBlock Text="Thème" Style="{StaticResource Etiquette}"/>
+            <RadioButton x:Name="ThemeSombre" Content="Sombre" GroupName="theme" VerticalContentAlignment="Center" Margin="0,0,16,0"/>
+            <RadioButton x:Name="ThemeClair" Content="Clair" GroupName="theme" VerticalContentAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,8">
+            <TextBlock Text="Couleur d'accent" Style="{StaticResource Etiquette}"/>
+            <StackPanel x:Name="ListeAccents" Orientation="Horizontal"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,4">
+            <TextBlock Text="Police" Style="{StaticResource Etiquette}"/>
+            <ComboBox x:Name="ChoixPolice" Width="220"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,8,0,4">
+            <TextBlock Text="Coins" Style="{StaticResource Etiquette}"/>
+            <ComboBox x:Name="ChoixArrondi" Width="220"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,4">
+            <TextBlock Text="Fond des widgets" Style="{StaticResource Etiquette}"/>
+            <ComboBox x:Name="ChoixFond" Width="220"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <TextBlock Text="RACCOURCIS CLAVIER" Style="{StaticResource Section}"/>
+      <Border Background="White" CornerRadius="10" BorderBrush="#E3E5E8" BorderThickness="1" Padding="16,12">
+        <StackPanel>
+          <TextBlock TextWrapping="Wrap"><Run FontWeight="SemiBold" Text="Win + D"/><Run Text="  ·  afficher le bureau et tes widgets (les widgets restent toujours derrière tes applications)"/></TextBlock>
+          <TextBlock TextWrapping="Wrap" Margin="0,6,0,0"><Run FontWeight="SemiBold" Text="Win + Alt + M"/><Run Text="  ·  couper / réactiver le micro"/></TextBlock>
+          <TextBlock x:Name="RaccourcisRefuses" Foreground="#C92A2A" TextWrapping="Wrap" Margin="0,6,0,0" Visibility="Collapsed"/>
+        </StackPanel>
+      </Border>
+
+      <TextBlock Text="SAUVEGARDE" Style="{StaticResource Section}"/>
+      <WrapPanel>
+        <Button x:Name="BoutonExporter" Content="Exporter ma disposition…" Style="{StaticResource Bouton}"/>
+        <Button x:Name="BoutonImporter" Content="Restaurer une sauvegarde…" Style="{StaticResource Bouton}"/>
+        <Button x:Name="BoutonRamener" Content="Ramener les widgets sur l'écran principal" Style="{StaticResource Bouton}"
+                ToolTip="Utile si tu as débranché un écran et que des widgets ont disparu"/>
+      </WrapPanel>
+
+      <TextBlock Text="RÉGLAGES" Style="{StaticResource Section}"/>
+      <CheckBox x:Name="CaseDemarrage" Content="Lancer Mes Widgets au démarrage de Windows" VerticalContentAlignment="Center"/>
+      <CheckBox x:Name="CaseChevauchement" Content="Empêcher les widgets de se chevaucher" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                ToolTip="Un widget lâché sur un autre se décale automatiquement vers la place libre la plus proche"/>
+      <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+        <TextBlock Text="Mises à jour depuis GitHub" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBox x:Name="ChampDepot" Width="190" Padding="4,3" VerticalContentAlignment="Center"
+                 ToolTip="Nom du dépôt GitHub où tu publies le programme, par exemple : pseudo/MesWidgets"/>
+        <Button x:Name="BoutonVerifier" Content="Vérifier" Style="{StaticResource Bouton}" Margin="8,0,0,0"/>
+      </StackPanel>
+      <TextBlock x:Name="EtatMaj" Foreground="{StaticResource Gris}" FontSize="12" Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+      <DockPanel Margin="0,26,0,0">
+        <Button x:Name="BoutonQuitter" DockPanel.Dock="Right" Content="Quitter Mes Widgets"
+                Style="{StaticResource LienRouge}" VerticalAlignment="Center"/>
+        <TextBlock x:Name="TexteVersion" TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Gris}" VerticalAlignment="Center"/>
+      </DockPanel>
+    </StackPanel>
+  </ScrollViewer>
+</Window>
