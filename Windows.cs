@@ -32,24 +32,102 @@ static class Bureau
         public uint flags;
     }
 
-    const int WM_WINDOWPOSCHANGING = 0x0046;
-    const uint SWP_NOZORDER = 0x0004;
+    [StructLayout(LayoutKind.Sequential)]
+    struct RECT { public int Left, Top, Right, Bottom; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct POINT { public int X, Y; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct MONITORINFO
+    {
+        public int cbSize;
+        public RECT rcMonitor, rcWork;
+        public uint dwFlags;
+    }
+
+    const int WM_WINDOWPOSCHANGING = 0x0046, WM_MOVING = 0x0216;
+    const uint SWP_NOSIZE = 0x0001, SWP_NOMOVE = 0x0002, SWP_NOZORDER = 0x0004, SWP_NOACTIVATE = 0x0010;
+    const uint MONITOR_DEFAULTTONEAREST = 2;
+    const double MargeTransparente = 6;
+
+    [DllImport("user32.dll")] static extern IntPtr MonitorFromRect(ref RECT r, uint flags);
+    [DllImport("user32.dll")] static extern IntPtr MonitorFromPoint(POINT p, uint flags);
+    [DllImport("user32.dll")] static extern bool GetMonitorInfo(IntPtr moniteur, ref MONITORINFO infos);
+    [DllImport("user32.dll")] static extern bool GetCursorPos(out POINT p);
+    [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr h, out RECT r);
+    [DllImport("user32.dll")] static extern uint GetDpiForWindow(IntPtr h);
 
     public static IntPtr GarderAuFond(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam, ref bool traite)
     {
+        if (message == WM_MOVING)
+        {
+            var r = Marshal.PtrToStructure<RECT>(lParam);
+            GetCursorPos(out var souris);
+            Marshal.StructureToPtr(Borner(hwnd, r, MonitorFromPoint(souris, MONITOR_DEFAULTTONEAREST)), lParam, false);
+            traite = true;
+            return new IntPtr(1);
+        }
+
         if (message == WM_WINDOWPOSCHANGING)
         {
             var pos = Marshal.PtrToStructure<WINDOWPOS>(lParam);
+            bool modifie = false;
+
             if ((pos.flags & SWP_NOZORDER) == 0 && pos.hwndInsertAfter != new IntPtr(1))
             {
                 pos.hwndInsertAfter = new IntPtr(1);
-                Marshal.StructureToPtr(pos, lParam, false);
+                modifie = true;
             }
+
+            if ((pos.flags & SWP_NOMOVE) == 0 || (pos.flags & SWP_NOSIZE) == 0)
+            {
+                GetWindowRect(hwnd, out var actuel);
+                int x = (pos.flags & SWP_NOMOVE) != 0 ? actuel.Left : pos.x;
+                int y = (pos.flags & SWP_NOMOVE) != 0 ? actuel.Top : pos.y;
+                int l = (pos.flags & SWP_NOSIZE) != 0 ? actuel.Right - actuel.Left : pos.cx;
+                int h = (pos.flags & SWP_NOSIZE) != 0 ? actuel.Bottom - actuel.Top : pos.cy;
+                if (l > 0 && h > 0)
+                {
+                    var r = new RECT { Left = x, Top = y, Right = x + l, Bottom = y + h };
+                    var b = Borner(hwnd, r, MonitorFromRect(ref r, MONITOR_DEFAULTTONEAREST));
+                    if (b.Left != x || b.Top != y)
+                    {
+                        pos.x = b.Left;
+                        pos.y = b.Top;
+                        if ((pos.flags & SWP_NOSIZE) != 0) { pos.cx = l; pos.cy = h; }
+                        pos.flags &= ~SWP_NOMOVE;
+                        modifie = true;
+                    }
+                }
+            }
+
+            if (modifie) Marshal.StructureToPtr(pos, lParam, false);
         }
         return IntPtr.Zero;
     }
-}
 
+    public static void RamenerDansEcran(IntPtr hwnd)
+    {
+        GetWindowRect(hwnd, out var r);
+        var b = Borner(hwnd, r, MonitorFromRect(ref r, MONITOR_DEFAULTTONEAREST));
+        if (b.Left != r.Left || b.Top != r.Top)
+            SetWindowPos(hwnd, IntPtr.Zero, b.Left, b.Top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+
+    static RECT Borner(IntPtr hwnd, RECT r, IntPtr moniteur)
+    {
+        var infos = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
+        if (!GetMonitorInfo(moniteur, ref infos)) return r;
+        uint dpi = GetDpiForWindow(hwnd);
+        int marge = (int)Math.Round(MargeTransparente * (dpi == 0 ? 96 : dpi) / 96.0);
+        var zone = infos.rcWork;
+        int largeur = r.Right - r.Left, hauteur = r.Bottom - r.Top;
+        int x = Math.Clamp(r.Left, zone.Left - marge, Math.Max(zone.Left - marge, zone.Right + marge - largeur));
+        int y = Math.Clamp(r.Top, zone.Top - marge, Math.Max(zone.Top - marge, zone.Bottom + marge - hauteur));
+        return new RECT { Left = x, Top = y, Right = x + largeur, Bottom = y + hauteur };
+    }
+}
 static class Demarrage
 {
     const string Cle = @"Software\Microsoft\Windows\CurrentVersion\Run";

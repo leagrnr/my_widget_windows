@@ -78,8 +78,8 @@ public abstract class WidgetWindow : Window
 
         Loaded += (_, _) => App.Instance.Ranger(this);
         var attente = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
-        attente.Tick += (_, _) => { attente.Stop(); App.Instance.Ranger(this); };
-        SizeChanged += (_, _) => { attente.Stop(); attente.Start(); };
+        attente.Tick += (_, _) => { attente.Stop(); Bureau.RamenerDansEcran(_hwnd); App.Instance.Ranger(this); };
+        SizeChanged += (_, _) => { if (_hwnd != IntPtr.Zero) Bureau.RamenerDansEcran(_hwnd); attente.Stop(); attente.Start(); };
         Closed += (_, _) => attente.Stop();
 
         Activated += (_, _) => Dispatcher.InvokeAsync(() => Bureau.AuFond(_hwnd));
@@ -91,6 +91,8 @@ public abstract class WidgetWindow : Window
         _hwnd = new WindowInteropHelper(this).Handle;
         Bureau.Coller(_hwnd);
         HwndSource.FromHwnd(_hwnd).AddHook(Bureau.GarderAuFond);
+        Loaded += (_, _) => Bureau.RamenerDansEcran(_hwnd);
+        ContentRendered += (_, _) => Bureau.RamenerDansEcran(_hwnd);
         AjouterPoignee();
         AppliquerApparence();
     }
@@ -111,10 +113,14 @@ public abstract class WidgetWindow : Window
 
     public void DemanderSuppression()
     {
-        if (ConfirmerSuppression()) App.Instance.Supprimer(this);
+        if (!ConfirmerSuppression()) return;
+        Supprime();
+        App.Instance.Supprimer(this);
     }
 
     protected virtual bool ConfirmerSuppression() => true;
+
+    protected virtual void Supprime() { }
 
     void ConstruireMenu()
     {

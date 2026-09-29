@@ -180,6 +180,7 @@ public class AnimalWidget : WidgetWindow
                 if (App.Instance.Obstacles(this).Any(o => Placement.Chevauche(o, suivante))) { _direction = -_direction; return; }
             }
             Left = x;
+            if (Math.Abs(Left - x) > 0.5) _direction = -_direction;
         }
     }
 

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace MesWidgets;
 
-class ChoixApplications : Window
+class ChoixApplications : Dialogue
 {
     readonly TextBox _recherche;
     readonly StackPanel _liste = new();
@@ -19,53 +18,56 @@ class ChoixApplications : Window
 
     public List<Applications.Appli> Choisies => _choisies.OrderBy(a => a.Nom).ToList();
 
-    ChoixApplications()
+    ChoixApplications() : base("Ajouter des applications", 480)
     {
-        Title = "Ajouter des applications";
-        Width = 440;
-        Height = 560;
-        WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        Topmost = true;
-        FontFamily = new FontFamily("Segoe UI");
-        FontSize = 14;
-        Background = new SolidColorBrush(Color.FromRgb(0xF4, 0xF5, 0xF7));
+        Grand("Ajouter des applications");
+        Aide("Coche une ou plusieurs applications, elles seront ajoutées à tes raccourcis.", 0);
 
-        _recherche = new TextBox { Padding = new Thickness(8, 6, 8, 6), Margin = new Thickness(0, 0, 0, 10) };
-        _recherche.TextChanged += (_, _) => Remplir();
-        _etat = new TextBlock { Text = "Chargement des applications…", Foreground = Brushes.Gray, Margin = new Thickness(4) };
-
-        _ajouter = new Button { Content = "Ajouter", IsDefault = true, IsEnabled = false, Width = 130, Padding = new Thickness(6, 5, 6, 5) };
-        _ajouter.Click += (_, _) => DialogResult = true;
-        var annuler = new Button { Content = "Annuler", IsCancel = true, Width = 90, Padding = new Thickness(6, 5, 6, 5), Margin = new Thickness(8, 0, 0, 0) };
-        var boutons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 10, 0, 0) };
-        boutons.Children.Add(_ajouter);
-        boutons.Children.Add(annuler);
-
-        var defilement = new ScrollViewer
+        _recherche = new TextBox { Padding = new Thickness(36, 8, 10, 8) };
+        var loupe = new TextBlock
         {
-            Content = new StackPanel { Children = { _etat, _liste } },
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            Text = "",
+            FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"),
+            FontSize = 14,
+            Margin = new Thickness(13, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            IsHitTestVisible = false,
         };
+        loupe.SetResourceReference(TextBlock.ForegroundProperty, "DlgTexteDoux");
+        var indice = new TextBlock { Text = "Rechercher une application…", Margin = new Thickness(37, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center, IsHitTestVisible = false };
+        indice.SetResourceReference(TextBlock.ForegroundProperty, "DlgTexteDoux");
+        _recherche.TextChanged += (_, _) =>
+        {
+            indice.Visibility = _recherche.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
+            Remplir();
+        };
+        var zoneRecherche = new Grid { Margin = new Thickness(0, 14, 0, 10) };
+        zoneRecherche.Children.Add(_recherche);
+        zoneRecherche.Children.Add(loupe);
+        zoneRecherche.Children.Add(indice);
+        Ajouter(zoneRecherche);
+
+        _etat = new TextBlock { Text = "Chargement des applications…", Margin = new Thickness(12, 10, 12, 10) };
+        _etat.SetResourceReference(TextBlock.ForegroundProperty, "DlgTexteDoux");
         var cadre = new Border
         {
-            Background = Brushes.White,
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0xE3, 0xE5, 0xE8)),
+            CornerRadius = new CornerRadius(10),
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(8),
             Padding = new Thickness(4),
-            Child = defilement,
+            Child = new ScrollViewer
+            {
+                Height = 360,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = new StackPanel { Children = { _etat, _liste } },
+            },
         };
+        cadre.SetResourceReference(Border.BackgroundProperty, "DlgSurface");
+        cadre.SetResourceReference(Border.BorderBrushProperty, "DlgBordure");
+        Ajouter(cadre);
 
-        var racine = new DockPanel { Margin = new Thickness(16) };
-        var aide = new TextBlock { Text = "Coche une ou plusieurs applications :", Margin = new Thickness(0, 0, 0, 8) };
-        DockPanel.SetDock(aide, Dock.Top);
-        DockPanel.SetDock(_recherche, Dock.Top);
-        DockPanel.SetDock(boutons, Dock.Bottom);
-        racine.Children.Add(aide);
-        racine.Children.Add(_recherche);
-        racine.Children.Add(boutons);
-        racine.Children.Add(cadre);
-        Content = racine;
+        _ajouter = Principal("Ajouter", Valider);
+        _ajouter.IsEnabled = false;
+        Boutons(Secondaire("Annuler"), _ajouter);
 
         Loaded += async (_, _) =>
         {
@@ -93,19 +95,11 @@ class ChoixApplications : Window
         foreach (var a in trouvees)
         {
             var ligne = new StackPanel { Orientation = Orientation.Horizontal };
-            ligne.Children.Add(new Image { Source = a.Icone, Width = 24, Height = 24, Margin = new Thickness(4, 0, 10, 0) });
+            ligne.Children.Add(new Image { Source = a.Icone, Width = 26, Height = 26, Margin = new Thickness(0, 0, 12, 0) });
             ligne.Children.Add(new TextBlock { Text = a.Nom, VerticalAlignment = VerticalAlignment.Center });
 
             var appli = a;
-            var coche = new CheckBox
-            {
-                Content = ligne,
-                IsChecked = _choisies.Contains(a),
-                VerticalContentAlignment = VerticalAlignment.Center,
-                Padding = new Thickness(4, 5, 4, 5),
-                Margin = new Thickness(4, 0, 4, 0),
-                Cursor = Cursors.Hand,
-            };
+            var coche = new CheckBox { Content = ligne, IsChecked = _choisies.Contains(a), Padding = new Thickness(10, 6, 10, 6) };
             coche.Checked += (_, _) => { _choisies.Add(appli); MettreAJourBouton(); };
             coche.Unchecked += (_, _) => { _choisies.Remove(appli); MettreAJourBouton(); };
             _liste.Children.Add(coche);

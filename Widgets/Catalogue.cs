@@ -6,7 +6,7 @@ public record TypeWidget(string Type, string Nom, string Icone, string Descripti
 
 public static class Catalogue
 {
-    public static readonly string[] Categories = { "Essentiels", "Organisation", "Mon PC", "Internet", "Jeux & fun" };
+    public static readonly string[] Categories = { "Essentiels", "Organisation", "Mon PC", "Internet", "Développement", "Jeux & fun" };
 
     public static readonly TypeWidget[] Types =
     {
@@ -43,9 +43,13 @@ public static class Catalogue
         new("devises",      "Taux de change",     "💱", "Euro, dollar, livre…",                  "Internet"),
         new("agenda",       "Agenda",             "🗓", "Tes prochains rendez-vous",             "Internet"),
 
+        new("github",       "GitHub",             "🐙", "Relectures, tâches assignées, contributions", "Développement"),
+        new("gitlab",       "GitLab",             "🦊", "Merge requests, tâches, contributions", "Développement"),
+
         new("animal",       "Chat",               "🐱", "Un chat qui se promène sur le bureau",  "Jeux & fun"),
         new("jeu2048",      "2048",               "🔢", "Fais glisser, fusionne, atteins 2048",  "Jeux & fun"),
         new("snake",        "Snake",              "🐍", "Le jeu du serpent",                     "Jeux & fun"),
+        new("valorant",     "Valorant",           "🎯", "Ton rang, tes RR et tes dernières parties", "Jeux & fun"),
         new("steam",        "Jeux Steam",         "🎮", "Tes derniers jeux, en un clic",         "Jeux & fun"),
     };
 
@@ -82,9 +86,12 @@ public static class Catalogue
         "air"           => new AirWidget(c),
         "devises"       => new DevisesWidget(c),
         "agenda"        => new AgendaWidget(c),
+        "github"        => new GitHubWidget(c),
+        "gitlab"        => new GitLabWidget(c),
         "animal"        => new AnimalWidget(c),
         "jeu2048"       => new Jeu2048Widget(c),
         "snake"         => new SnakeWidget(c),
+        "valorant"      => new ValorantWidget(c),
         "steam"         => new SteamWidget(c),
         _ => null,
     };
