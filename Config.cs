@@ -23,6 +23,7 @@ public class AppConfig
     public double Arrondi { get; set; } = 16;
     public string Fond { get; set; } = "normal";
     public bool SansChevauchement { get; set; } = true;
+    public bool Magnetisme { get; set; } = true;
     public string Depot { get; set; } = "";
     public List<WidgetConfig> Widgets { get; set; } = new();
 }

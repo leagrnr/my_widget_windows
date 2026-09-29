@@ -6,7 +6,7 @@ Les widgets restent **collés au bureau**, derrière tes fenêtres, sans jamais 
 
 ![Windows 10 / 11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
-![Version](https://img.shields.io/badge/version-2.6.0-4F8CFF)
+![Version](https://img.shields.io/badge/version-2.7.0-4F8CFF)
 
 ---
 
@@ -15,6 +15,7 @@ Les widgets restent **collés au bureau**, derrière tes fenêtres, sans jamais 
 - **33 widgets** répartis en 5 catégories (liste ci-dessous)
 - **Collés au bureau** : toujours derrière tes applications (jamais par-dessus), visibles avec Win+D, invisibles dans Alt+Tab
 - **Pas de chevauchement** : un widget lâché sur un autre se décale vers la place libre la plus proche
+- **Alignement automatique** : un widget lâché près d'un autre s'aimante sur ses bords (ou juste à côté, avec un espace régulier), et le bouton *Aligner tous les widgets* redresse toute la disposition
 - **Personnalisable** : thème clair ou sombre, 8 couleurs d'accent, 7 polices, coins plus ou moins arrondis, transparence du fond
 - **Taille libre** : tire le coin en bas à droite d'un widget, ou Ctrl + molette (de 50 % à 300 %)
 - **Pour chaque widget** : opacité, verrouillage de la position et de la taille

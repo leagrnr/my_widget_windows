@@ -72,6 +72,11 @@ public partial class GestionnaireWindow : Window
         CaseDemarrage.Checked += (_, _) => Demarrage.Activer(true);
         CaseDemarrage.Unchecked += (_, _) => Demarrage.Activer(false);
 
+        CaseMagnetisme.IsChecked = config.Magnetisme;
+        CaseMagnetisme.Checked += (_, _) => { config.Magnetisme = true; app.Sauver(); };
+        CaseMagnetisme.Unchecked += (_, _) => { config.Magnetisme = false; app.Sauver(); };
+        BoutonAligner.Click += (_, _) => app.AlignerTout();
+
         CaseChevauchement.IsChecked = config.SansChevauchement;
         CaseChevauchement.Checked += (_, _) => { config.SansChevauchement = true; app.Sauver(); app.RangerTout(); };
         CaseChevauchement.Unchecked += (_, _) => { config.SansChevauchement = false; app.Sauver(); };

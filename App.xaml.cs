@@ -112,6 +112,30 @@ public partial class App : Application
         Sauver();
     }
 
+    public void Aimanter(WidgetWindow w, double seuil = 20)
+    {
+        if (_quitte || !w.IsLoaded || w.ActualWidth == 0 || w.Config.Type == "animal") return;
+        var reperes = _widgets
+            .Where(x => x != w && x.IsLoaded && x.ActualWidth > 0 && x.Config.Type != "animal")
+            .Select(x => x.Zone).ToList();
+        var zone = w.Zone;
+        var place = Placement.Aimanter(zone, reperes, Placement.Ecrans(w), seuil);
+        if (Math.Abs(place.X - zone.X) < 0.5 && Math.Abs(place.Y - zone.Y) < 0.5) return;
+        w.Left += place.X - zone.X;
+        w.Top += place.Y - zone.Y;
+        w.Config.X = w.Left;
+        w.Config.Y = w.Top;
+        Sauver();
+    }
+
+    public void AlignerTout()
+    {
+        for (int passe = 0; passe < 2; passe++)
+            foreach (var w in _widgets.OrderBy(x => x.Top).ThenBy(x => x.Left).ToList())
+                Aimanter(w, 60);
+        RangerTout();
+    }
+
     public void RangerTout()
     {
         foreach (var w in _widgets.ToList()) Ranger(w);

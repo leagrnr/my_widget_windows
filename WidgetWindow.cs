@@ -71,6 +71,7 @@ public abstract class WidgetWindow : Window
             Config.X = Left;
             Config.Y = Top;
             App.Instance.Sauver();
+            if (App.Instance.Config.Magnetisme) App.Instance.Aimanter(this);
             App.Instance.Ranger(this);
             Bureau.AuFond(_hwnd);
         };
