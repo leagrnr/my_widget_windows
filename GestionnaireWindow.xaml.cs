@@ -27,9 +27,52 @@ public partial class GestionnaireWindow : Window
             ListeTypes.Children.Add(tuiles);
         }
 
-        (config.Theme == "clair" ? ThemeClair : ThemeSombre).IsChecked = true;
-        ThemeSombre.Checked += (_, _) => app.ChangerTheme("sombre");
-        ThemeClair.Checked += (_, _) => app.ChangerTheme("clair");
+        var themes = new[] { ("sombre", "Sombre"), ("clair", "Clair"), ("auto", "Automatique (comme Windows)"), ("horaire", "Selon l'heure (clair de 7 h à 20 h)") };
+        foreach (var (_, nom) in themes) ChoixTheme.Items.Add(nom);
+        ChoixTheme.SelectedIndex = Math.Max(0, Array.FindIndex(themes, t => t.Item1 == config.Theme));
+        ChoixTheme.SelectionChanged += (_, _) => { if (!_chargement) app.ChangerTheme(themes[ChoixTheme.SelectedIndex].Item1); };
+
+        RemplirProfils();
+        ChoixProfil.SelectionChanged += (_, _) =>
+        {
+            if (_chargement || ChoixProfil.SelectedItem is not string nom || nom == app.Config.ProfilActif) return;
+            app.ChangerProfil(nom);
+        };
+        BoutonNouveauProfil.Click += (_, _) =>
+        {
+            var nom = Saisie.Demander("Nouveau profil", "Nom du profil (ex. Travail, Jeu, Minimal) :");
+            if (nom == null) return;
+            bool copier = MessageBox.Show(this, $"Partir de ta disposition actuelle ?\n\nOui : « {nom} » commence avec une copie de tes widgets.\nNon : « {nom} » commence vide.",
+                "Nouveau profil", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+            if (!app.CreerProfil(nom, copier)) MessageBox.Show(this, "Ce nom de profil existe déjà.", "Profils");
+            RemplirProfils();
+        };
+        BoutonRenommerProfil.Click += (_, _) =>
+        {
+            var actuel = app.Config.ProfilActif;
+            var nom = Saisie.Demander("Renommer le profil", "Nouveau nom :", actuel);
+            if (nom == null || nom == actuel) return;
+            if (!app.RenommerProfil(actuel, nom)) MessageBox.Show(this, "Ce nom de profil existe déjà.", "Profils");
+            RemplirProfils();
+        };
+        BoutonSupprimerProfil.Click += (_, _) =>
+        {
+            var actuel = app.Config.ProfilActif;
+            var autre = app.NomsProfils.FirstOrDefault(n => n != actuel);
+            if (autre == null) { MessageBox.Show(this, "C'est ton seul profil : crée d'abord un autre profil.", "Profils"); return; }
+            if (MessageBox.Show(this, $"Supprimer le profil « {actuel} » et ses widgets ?\n\nTu passeras sur le profil « {autre} ».", "Profils",
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+            app.ChangerProfil(autre);
+            app.SupprimerProfil(actuel);
+            RemplirProfils();
+        };
+
+        BoutonMasquer.Content = app.Masques ? "Afficher tous les widgets" : "Masquer tous les widgets";
+        BoutonMasquer.Click += (_, _) =>
+        {
+            app.BasculerMasquage();
+            BoutonMasquer.Content = app.Masques ? "Afficher tous les widgets" : "Masquer tous les widgets";
+        };
         ConstruireAccents();
 
         foreach (var p in Theme.Polices) ChoixPolice.Items.Add(new ComboBoxItem { Content = p, FontFamily = new FontFamily(p) });
@@ -116,6 +159,16 @@ public partial class GestionnaireWindow : Window
         Closed += (_, _) => { app.WidgetsChanged -= Rafraichir; MiseAJour.Changement -= AfficherMaj; };
         Rafraichir();
         _chargement = false;
+    }
+
+    void RemplirProfils()
+    {
+        bool avant = _chargement;
+        _chargement = true;
+        ChoixProfil.Items.Clear();
+        foreach (var nom in App.Instance.NomsProfils) ChoixProfil.Items.Add(nom);
+        ChoixProfil.SelectedItem = App.Instance.Config.ProfilActif;
+        _chargement = avant;
     }
 
     void Appliquer(Action changement)

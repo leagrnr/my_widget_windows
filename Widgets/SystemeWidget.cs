@@ -40,7 +40,7 @@ public class SystemeWidget : WidgetWindow
         Minuteur(TimeSpan.FromSeconds(2), MettreAJour);
     }
 
-    static Jauge CreerJauge(string nom, Panel parent)
+    Jauge CreerJauge(string nom, Panel parent)
     {
         var valeur = Texte("", 13);
         valeur.HorizontalAlignment = HorizontalAlignment.Right;
@@ -58,7 +58,7 @@ public class SystemeWidget : WidgetWindow
         return new Jauge { Racine = bloc, Valeur = valeur, Rempli = rempli };
     }
 
-    static void Regler(Jauge j, double ratio, string texte, bool alerte)
+    void Regler(Jauge j, double ratio, string texte, bool alerte)
     {
         j.Valeur.Text = texte;
         j.Rempli.Width = Largeur * Math.Clamp(ratio, 0, 1);

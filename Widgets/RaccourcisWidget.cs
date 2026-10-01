@@ -96,7 +96,7 @@ public class RaccourcisWidget : WidgetWindow
             _tuiles.Children.Add(Texte("✏ Modifier › Ajouter…", 13, Pale));
     }
 
-    static FrameworkElement Icone(string cible)
+    FrameworkElement Icone(string cible)
     {
         if (cible.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             return Glyphe("", 28, Accent);

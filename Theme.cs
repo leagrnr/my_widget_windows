@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 
@@ -22,7 +23,23 @@ public static class Theme
 
     static AppConfig C => App.Instance?.Config;
 
-    public static bool Clair => C?.Theme == "clair";
+    public static bool Clair => C?.Theme switch
+    {
+        "clair" => true,
+        "auto" => WindowsEnClair(),
+        "horaire" => DateTime.Now.Hour is >= 7 and < 20,
+        _ => false,
+    };
+
+    static bool WindowsEnClair()
+    {
+        try
+        {
+            using var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+            return k?.GetValue("AppsUseLightTheme") is int v && v == 1;
+        }
+        catch { return false; }
+    }
     public static string Police => C?.Police ?? "Segoe UI";
     public static double Arrondi => C?.Arrondi ?? 16;
 
@@ -33,18 +50,17 @@ public static class Theme
     public static Brush Alerte    { get; } = B(0xFF, 0xFF, 0x6B, 0x6B);
     public static Brush Orange    { get; } = B(0xFF, 0xFF, 0xA9, 0x4D);
 
-    public static Brush Fond
+    public static Brush Fond => FondPour(C?.Fond);
+
+    public static Brush FondPour(string code)
     {
-        get
+        byte alpha = (code, Clair) switch
         {
-            byte alpha = (C?.Fond, Clair) switch
-            {
-                ("leger", false) => 0x80, ("leger", true) => 0xA8,
-                ("opaque", false) => 0xF0, ("opaque", true) => 0xFA,
-                (_, false) => 0xC0, (_, true) => 0xE6,
-            };
-            return Clair ? B(alpha, 0xFF, 0xFF, 0xFF) : B(alpha, 0x16, 0x18, 0x1D);
-        }
+            ("leger", false) => 0x80, ("leger", true) => 0xA8,
+            ("opaque", false) => 0xF0, ("opaque", true) => 0xFA,
+            (_, false) => 0xC0, (_, true) => 0xE6,
+        };
+        return Clair ? B(alpha, 0xFF, 0xFF, 0xFF) : B(alpha, 0x16, 0x18, 0x1D);
     }
 
     static readonly Dictionary<string, Brush> _accents = new();
@@ -73,7 +89,9 @@ public static class Theme
 
     public static SolidColorBrush Hex(string hex)
     {
-        var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+        SolidColorBrush brush;
+        try { brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex)); }
+        catch { brush = new SolidColorBrush(Color.FromRgb(0x4F, 0x8C, 0xFF)); }
         brush.Freeze();
         return brush;
     }

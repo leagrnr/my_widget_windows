@@ -24,6 +24,8 @@ public static class Catalogue
         new("rebours",      "Compte à rebours",   "⏳", "Les jours avant une date",              "Organisation"),
         new("pomodoro",     "Pomodoro",           "⏱", "Minuteur travail / pause",              "Organisation"),
         new("anniversaires","Anniversaires",      "🎂", "Les prochains anniversaires",           "Organisation"),
+        new("alarmes",      "Alarmes",            "⏰", "Réveils et rappels à heure fixe",       "Organisation"),
+        new("pauses",       "Pauses",             "💧", "Boire, bouger, reposer tes yeux",       "Organisation"),
         new("conges",       "Congés & fériés",    "🏖", "Vacances scolaires et jours fériés",    "Organisation"),
         new("mondes",       "Horloges du monde",  "🌍", "L'heure dans d'autres villes",          "Organisation"),
         new("raccourcis",   "Raccourcis",         "📁", "Tes applis, dossiers et sites",         "Organisation"),
@@ -45,11 +47,13 @@ public static class Catalogue
 
         new("github",       "GitHub",             "🐙", "Relectures, tâches assignées, contributions", "Développement"),
         new("gitlab",       "GitLab",             "🦊", "Merge requests, tâches, contributions", "Développement"),
+        new("docker",       "Docker",             "🐳", "Tes conteneurs, démarrer / arrêter",    "Développement"),
 
         new("animal",       "Chat",               "🐱", "Un chat qui se promène sur le bureau",  "Jeux & fun"),
         new("jeu2048",      "2048",               "🔢", "Fais glisser, fusionne, atteins 2048",  "Jeux & fun"),
         new("snake",        "Snake",              "🐍", "Le jeu du serpent",                     "Jeux & fun"),
         new("valorant",     "Valorant",           "🎯", "Ton rang, tes RR et tes dernières parties", "Jeux & fun"),
+        new("discord",      "Discord",            "💬", "Qui est en ligne sur un serveur",       "Jeux & fun"),
         new("steam",        "Jeux Steam",         "🎮", "Tes derniers jeux, en un clic",         "Jeux & fun"),
     };
 
@@ -93,6 +97,10 @@ public static class Catalogue
         "snake"         => new SnakeWidget(c),
         "valorant"      => new ValorantWidget(c),
         "steam"         => new SteamWidget(c),
+        "discord"       => new DiscordWidget(c),
+        "docker"        => new DockerWidget(c),
+        "alarmes"       => new AlarmesWidget(c),
+        "pauses"        => new PausesWidget(c),
         _ => null,
     };
 }

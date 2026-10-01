@@ -12,7 +12,7 @@
     <RootNamespace>MesWidgets</RootNamespace>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <Product>Mes Widgets</Product>
-    <Version>2.13.0</Version>
+    <Version>2.15.0</Version>
     <!-- Publication : un seul .exe autonome (pas besoin d'installer .NET sur le PC), compressé -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>

@@ -6,22 +6,24 @@ Les widgets restent **collés au bureau**, toujours derrière tes applications, 
 
 ![Windows 10 / 11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
-![Version](https://img.shields.io/badge/version-2.13.0-4F8CFF)
+![Version](https://img.shields.io/badge/version-2.15.0-4F8CFF)
 
 ---
 
 ## ✨ Fonctionnalités
 
-- **36 widgets** répartis en 6 catégories (liste ci-dessous)
+- **40 widgets** répartis en 6 catégories (liste ci-dessous)
 - **Collés au bureau** : toujours derrière tes applications (jamais par-dessus), visibles avec `Win` + `D`, invisibles dans `Alt` + `Tab`
 - **Alignement automatique** : un widget lâché près d'un autre s'aimante sur ses bords, ou se place juste à côté avec un espace régulier. Le bouton *Aligner tous les widgets* redresse toute la disposition d'un coup.
-- **Pas de chevauchement** : un widget lâché ou agrandi contre un autre **rétrécit** juste assez pour tenir (jusqu'à 50 %). S'il n'y a vraiment pas la place, il se décale vers l'espace libre le plus proche. Tu peux choisir de toujours le décaler plutôt que le rétrécir.
+- **Pas de chevauchement** : un widget lâché ou agrandi contre un autre **rétrécit** juste assez pour tenir (jusqu'à 50 %). S'il n'y a vraiment pas la place, il se décale vers l'espace libre le plus proche. Tu peux choisir de toujours le décaler plutôt que le rétrécir. Dès que la place se libère, il **regrandit** tout seul jusqu'à sa taille d'origine.
 - **Toujours dans l'écran** : un widget ne peut pas sortir de l'écran ni passer sous la barre des tâches. Il bute contre les bords quand tu le déplaces, et il est ramené à l'intérieur s'il grandit trop près d'un bord ou après un changement d'écran.
 - **Taille libre** : tire le coin en bas à droite d'un widget, ou `Ctrl` + molette (de 50 % à 300 %)
 - **Bouton ✏ Modifier** sur chaque widget (visible au survol) : réglages, taille, opacité, verrouillage, suppression
-- **Personnalisable** : thème clair ou sombre, 8 couleurs d'accent, 7 polices, coins plus ou moins arrondis, transparence du fond. Les menus et les fenêtres de configuration suivent le même style.
-- **Raccourci clavier global** : `Win` + `Alt` + `M` pour couper ou réactiver le micro
-- **Sauvegarde** : exporter ou restaurer ta disposition dans un fichier `.json`
+- **Personnalisable** : thème sombre, clair, **automatique** (comme Windows) ou **selon l'heure**, 8 couleurs d'accent, 7 polices, coins plus ou moins arrondis, transparence du fond. Chaque widget peut aussi avoir **sa propre couleur** et **son propre fond**. Les menus, les fenêtres de configuration et les alertes suivent le même style.
+- **Profils de disposition** : par exemple *Travail*, *Jeu* et *Minimal*, chacun avec ses widgets et leurs positions, et on passe de l'un à l'autre en un clic
+- **Masquer tous les widgets** d'un coup, pratique pendant un partage d'écran
+- **Raccourcis clavier globaux** : `Win` + `Alt` + `H` pour masquer ou afficher les widgets, `Win` + `Alt` + `M` pour couper ou réactiver le micro
+- **Sauvegarde** : exporter ou restaurer ta disposition dans un fichier `.json`, et sauvegardes automatiques quotidiennes
 - **Plusieurs écrans** pris en charge, avec un bouton pour ramener les widgets sur l'écran principal
 - **Mises à jour automatiques** depuis les *Releases* GitHub (voir [Publier une nouvelle version](#-publier-une-nouvelle-version))
 - **Sans compte pour l'essentiel** : la plupart des widgets utilisent des services gratuits et publics. Seuls GitHub, GitLab et Valorant demandent un jeton ou une clé (voir [Connecter tes comptes](#-connecter-tes-comptes)).
@@ -31,11 +33,11 @@ Les widgets restent **collés au bureau**, toujours derrière tes applications, 
 | Catégorie | Widgets |
 |---|---|
 | **Essentiels** | 🕒 Horloge · 📝 Post-it (6 couleurs) · 📅 Calendrier · ⛅ Météo · 🌅 Soleil & lune · 💬 Citation du jour · 🖼 Cadre photo |
-| **Organisation** | ✅ Liste de tâches · 📓 Carnet de notes · 📋 Presse-papiers · ⏳ Compte à rebours · ⏱ Pomodoro · 🎂 Anniversaires · 🏖 Congés & jours fériés · 🌍 Horloges du monde · 📁 Raccourcis (applis installées, dossiers, sites) |
+| **Organisation** | ✅ Liste de tâches · 📓 Carnet de notes · 📋 Presse-papiers · ⏳ Compte à rebours · ⏱ Pomodoro · 🎂 Anniversaires · 🏖 Congés & jours fériés · 🌍 Horloges du monde · 📁 Raccourcis (applis installées, dossiers, sites) · ⏰ Alarmes · 💧 Pauses (boire, bouger, reposer tes yeux) |
 | **Mon PC** | 📊 Infos système · 🔋 Batterie · 🌡 Températures · 🎵 Musique (Spotify, navigateur…) · 🔊 Volume · 🎙 Micro · 📶 Réseau · 🗑 Corbeille |
 | **Internet** | 🔍 Barre de recherche · 📰 Actualités (flux RSS) · 🍃 Qualité de l'air & pollens · 💱 Taux de change · 🗓 Agenda (Google / Outlook) |
-| **Développement** | 🐙 GitHub · 🦊 GitLab (gitlab.com ou ton propre serveur) : relectures demandées, tâches assignées, notifications, graphique de contributions |
-| **Jeux & fun** | 🐱 Un chat qui se promène sur le bureau · 🔢 2048 · 🐍 Snake · 🎮 Derniers jeux Steam · 🎯 Valorant (rang, RR, dernières parties classées) |
+| **Développement** | 🐙 GitHub · 🦊 GitLab (gitlab.com ou ton propre serveur) : relectures demandées, tâches assignées, notifications, graphique de contributions · 🐳 Docker (tes conteneurs, démarrer / arrêter) |
+| **Jeux & fun** | 🐱 Un chat qui se promène sur le bureau · 🔢 2048 · 🐍 Snake · 🎮 Derniers jeux Steam · 🎯 Valorant (rang, RR, dernières parties classées) · 💬 Discord (qui est en ligne sur un serveur et à quoi ils jouent) |
 
 ---
 
@@ -65,6 +67,7 @@ C'est tout. Mes Widgets s'ouvre avec une horloge et un post-it, et la fenêtre d
 |---|---|
 | Programme | `%LOCALAPPDATA%\Programs\MesWidgets\MesWidgets.exe` |
 | Tes widgets et réglages | `%LOCALAPPDATA%\MesWidgets\config.json` |
+| Sauvegardes automatiques | `config.json.bak` (version précédente) et `sauvegardes\` (une par jour, les 10 dernières) dans le même dossier |
 | Jetons et clés (GitHub, GitLab, Valorant) | Gestionnaire d'identification de Windows, chiffrés |
 | Raccourci | Menu Démarrer › **Mes Widgets** |
 | Lancement automatique | À l'ouverture de session (réglable dans le gestionnaire) |
@@ -94,6 +97,9 @@ Le programme te demande si tu veux garder tes widgets et leurs réglages, pour l
 | Agrandir / réduire un widget | Tirer le coin en bas à droite (visible au survol), ou `Ctrl` + molette |
 | Régler un widget | Passer la souris dessus, puis clic sur le bouton ✏ en haut à droite (ou clic droit) |
 | Supprimer un widget | ✏ › *Supprimer ce widget* |
+| Changer la couleur d'un seul widget | ✏ › *Couleur de ce widget* ou *Fond de ce widget* |
+| Changer de profil | Gestionnaire › *Profils*, ou clic droit sur l'icône › *Profil* |
+| Masquer / afficher tous les widgets | `Win` + `Alt` + `H`, ou clic droit sur l'icône |
 | Voir les widgets cachés par tes fenêtres | `Win` + `D` (afficher le bureau) |
 
 L'aimantation et la règle « pas de chevauchement » se désactivent dans **Gestionnaire › Réglages**.
@@ -127,8 +133,8 @@ Les jetons et la clé sont rangés **chiffrés** dans le Gestionnaire d'identifi
 ### Compiler et tester
 
 ```powershell
-git clone https://github.com/<ton-pseudo>/MesWidgets.git
-cd MesWidgets
+git clone https://github.com/leagrnr/my_widget_windows.git
+cd my_widget_windows
 dotnet build -c Release
 ```
 
@@ -156,6 +162,7 @@ MesWidgets/
 ├── Dialogue.cs                Modèle des fenêtres de configuration
 ├── Dialogues.xaml             Style des champs, boutons, listes de ces fenêtres
 ├── Saisie.cs                  Petite fenêtre « saisir un texte »
+├── Alerte.cs                  Alertes et questions (Oui / Non) dans le style de l'appli
 ├── ConnexionForge.cs          Connexion GitHub / GitLab
 ├── ChoixApplications.cs       Choix des applis installées (widget Raccourcis)
 ├── Applications.cs            Liste et icônes des applis installées
@@ -166,7 +173,7 @@ MesWidgets/
 ├── Lieux.cs                   Recherche de villes (météo, soleil, qualité de l'air)
 ├── Installation.cs            Installation / désinstallation
 ├── MiseAJour.cs               Mises à jour via GitHub Releases
-├── RaccourcisClavier.cs       Win+Alt+M (couper le micro)
+├── RaccourcisClavier.cs       Win+Alt+H (masquer les widgets) et Win+Alt+M (couper le micro)
 ├── Config.cs                  Sauvegarde dans %LOCALAPPDATA%\MesWidgets
 ├── installer.ps1              Compile l'installateur et installe
 └── outils/creer-icone.ps1     Dessine l'icône app.ico
@@ -183,13 +190,11 @@ Tout le reste vient automatiquement de la classe de base : déplacement, bouton 
 
 ## 🚀 Publier une nouvelle version
 
-1. Augmente `<Version>` dans `MesWidgets.csproj` (par exemple `2.11.0`).
+1. Augmente `<Version>` dans `MesWidgets.csproj` (par exemple `2.16.0`).
 2. Lance `.\installer.ps1` pour créer `dist\MesWidgets-Setup.exe`.
-3. Sur GitHub, crée une **Release** avec le tag `v2.11.0` et joins-lui le fichier `MesWidgets-Setup.exe`.
+3. Sur GitHub, crée une **Release** avec le tag `v2.16.0` et joins-lui le fichier `MesWidgets-Setup.exe`.
 
-Pour recevoir la mise à jour automatiquement, les utilisateurs saisissent le nom du dépôt (`<ton-pseudo>/MesWidgets`) dans **Gestionnaire › Réglages › Mises à jour depuis GitHub**. Mes Widgets vérifie ensuite toutes les 12 heures et propose d'installer la nouvelle version.
-
-> 💡 Pour que ce soit automatique pour tout le monde, mets ton dépôt comme valeur par défaut de `Depot` dans `Config.cs`.
+Mes Widgets vérifie les *Releases* de [`leagrnr/my_widget_windows`](https://github.com/leagrnr/my_widget_windows/releases) toutes les 12 heures et propose d'installer la nouvelle version. Un autre dépôt peut être indiqué dans **Gestionnaire › Réglages › Mises à jour depuis GitHub** (utile pour un fork).
 
 ---
 
@@ -208,6 +213,8 @@ Mes Widgets ne collecte aucune donnée. Certains widgets contactent des services
 | API GitHub | Mises à jour, widget GitHub | Rien pour les mises à jour · ton jeton d'accès pour le widget |
 | API GitLab (ton serveur) | Widget GitLab | Ton jeton d'accès |
 | [HenrikDev API](https://docs.henrikdev.xyz) (non officielle) | Widget Valorant | Ton Riot ID, ta région et ta clé API |
+| Widget public d'un serveur Discord | Discord | L'identifiant du serveur choisi |
+| Docker Desktop (sur ton PC) | Docker | Rien ne sort de ton PC |
 
 Les jetons GitHub et GitLab et la clé Valorant sont rangés dans le **Gestionnaire d'identification de Windows** (chiffrés, liés à ton compte Windows), jamais dans `config.json` ni dans les sauvegardes exportées. Ils sont effacés quand tu supprimes le widget ou cliques sur *Se déconnecter*.
 
@@ -221,6 +228,7 @@ Le widget **Presse-papiers** garde son historique uniquement en mémoire, jamais
 - **Agenda** : les répétitions courantes sont gérées (tous les jours, semaines, mois, ans). Les règles complexes, comme « le 2e mardi du mois », ne le sont pas.
 - **Valorant** : il dépend d'une API communautaire non officielle. Si elle change ou tombe en panne, le widget ne peut plus se mettre à jour. Une clé gratuite limite aussi le nombre de demandes.
 - **GitLab** : le graphique de contributions ne s'affiche que si ton profil est public. Le reste du widget fonctionne quand même.
+- **Discord** : il montre les membres en ligne d'un **serveur** dont le widget est activé (Paramètres du serveur › Widget). Discord ne permet pas aux applications non approuvées de lire ta liste d'amis.
 - **Déplacement** : pendant qu'on le déplace, un widget peut passer au-dessus des autres. Il s'aligne et se range quand on le lâche.
 - **Nouveau widget** : comme les widgets restent toujours derrière les fenêtres, un widget ajouté depuis le gestionnaire apparaît derrière celui-ci. Utilise `Win` + `D` pour le voir.
 
@@ -230,6 +238,8 @@ Le widget **Presse-papiers** garde son historique uniquement en mémoire, jamais
 
 | Version | Nouveautés |
 |---|---|
+| **2.15** | Profils de disposition, thème automatique, masquer tous les widgets, couleur par widget, regrandissement automatique, alertes redessinées, widgets Docker, Discord, Alarmes et Pauses |
+| **2.14** | Tes widgets ne peuvent plus être perdus au démarrage : réessais, aucun enregistrement tant que les réglages ne sont pas relus, sauvegardes automatiques |
 | **2.13** | Poignée de déplacement en haut de chaque widget |
 | **2.12** | Un widget qui manque de place rétrécit au lieu d'être déplacé |
 | **2.11** | Les widgets ne peuvent plus sortir de l'écran ni passer sous la barre des tâches |

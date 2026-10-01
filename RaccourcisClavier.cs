@@ -17,6 +17,7 @@ static class RaccourcisClavier
     public static void Enregistrer()
     {
         Ajouter(2, 'M', "Win+Alt+M", App.Instance.BasculerMicro);
+        Ajouter(3, 'H', "Win+Alt+H", App.Instance.BasculerMasquage);
 
         ComponentDispatcher.ThreadPreprocessMessage += (ref MSG msg, ref bool traite) =>
         {

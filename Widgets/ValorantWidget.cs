@@ -379,7 +379,10 @@ public class ValorantWidget : WidgetWindow
             Loaded += (_, _) => _riotId.Focus();
         }
     }
-    protected override void Supprime() => Coffre.Effacer(CleCoffre);
+    protected override void Supprime()
+    {
+        if (!App.Instance.IdPartage(Config)) Coffre.Effacer(CleCoffre);
+    }
 
     protected override void RemplirMenu()
     {

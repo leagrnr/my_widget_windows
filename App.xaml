@@ -9,6 +9,13 @@
     <SolidColorBrush x:Key="MenuSurvol" Color="#24FFFFFF"/>
     <SolidColorBrush x:Key="MenuBordure" Color="#30FFFFFF"/>
     <SolidColorBrush x:Key="MenuAccent" Color="#4F8CFF"/>
+    <SolidColorBrush x:Key="DlgFond" Color="#1B1D24"/>
+    <SolidColorBrush x:Key="DlgSurface" Color="#262933"/>
+    <SolidColorBrush x:Key="DlgTexte" Color="#F2F3F5"/>
+    <SolidColorBrush x:Key="DlgTexteDoux" Color="#9CA3AF"/>
+    <SolidColorBrush x:Key="DlgBordure" Color="#3A3E4A"/>
+    <SolidColorBrush x:Key="DlgSurvol" Color="#18FFFFFF"/>
+    <SolidColorBrush x:Key="DlgAccent" Color="#4F8CFF"/>
     <FontFamily x:Key="Icones">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <Style TargetType="ContextMenu">

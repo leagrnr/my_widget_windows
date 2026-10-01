@@ -28,6 +28,7 @@ static class MiseAJour
     public static async Task<bool?> Verifier()
     {
         var depot = App.Instance.Config.Depot?.Trim().Trim('/');
+        if (string.IsNullOrEmpty(depot)) depot = new AppConfig().Depot;
         if (string.IsNullOrEmpty(depot)) return null;
         try
         {

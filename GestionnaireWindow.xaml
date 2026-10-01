@@ -122,8 +122,7 @@
         <StackPanel>
           <StackPanel Orientation="Horizontal" Margin="0,4">
             <TextBlock Text="Thème" Style="{StaticResource Etiquette}"/>
-            <RadioButton x:Name="ThemeSombre" Content="Sombre" GroupName="theme" VerticalContentAlignment="Center" Margin="0,0,16,0"/>
-            <RadioButton x:Name="ThemeClair" Content="Clair" GroupName="theme" VerticalContentAlignment="Center"/>
+            <ComboBox x:Name="ChoixTheme" Width="260"/>
           </StackPanel>
           <StackPanel Orientation="Horizontal" Margin="0,8">
             <TextBlock Text="Couleur d'accent" Style="{StaticResource Etiquette}"/>
@@ -148,13 +147,30 @@
       <Border Background="White" CornerRadius="10" BorderBrush="#E3E5E8" BorderThickness="1" Padding="16,12">
         <StackPanel>
           <TextBlock TextWrapping="Wrap"><Run FontWeight="SemiBold" Text="Win + D"/><Run Text="  ·  afficher le bureau et tes widgets (les widgets restent toujours derrière tes applications)"/></TextBlock>
+          <TextBlock TextWrapping="Wrap" Margin="0,6,0,0"><Run FontWeight="SemiBold" Text="Win + Alt + H"/><Run Text="  ·  masquer / afficher tous les widgets"/></TextBlock>
           <TextBlock TextWrapping="Wrap" Margin="0,6,0,0"><Run FontWeight="SemiBold" Text="Win + Alt + M"/><Run Text="  ·  couper / réactiver le micro"/></TextBlock>
           <TextBlock x:Name="RaccourcisRefuses" Foreground="#C92A2A" TextWrapping="Wrap" Margin="0,6,0,0" Visibility="Collapsed"/>
         </StackPanel>
       </Border>
 
+      <TextBlock Text="PROFILS" Style="{StaticResource Section}"/>
+      <Border Background="White" CornerRadius="10" BorderBrush="#E3E5E8" BorderThickness="1" Padding="16,12">
+        <StackPanel>
+          <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource Gris}" Margin="0,0,0,10"
+                     Text="Chaque profil garde sa propre disposition de widgets : par exemple Travail, Jeu ou Minimal. Change de profil ici ou avec l'icône près de l'horloge."/>
+          <WrapPanel>
+            <ComboBox x:Name="ChoixProfil" Width="200" Margin="0,0,10,8" VerticalContentAlignment="Center"/>
+            <Button x:Name="BoutonNouveauProfil" Content="Nouveau profil…" Style="{StaticResource Bouton}"/>
+            <Button x:Name="BoutonRenommerProfil" Content="Renommer…" Style="{StaticResource Bouton}"/>
+            <Button x:Name="BoutonSupprimerProfil" Content="Supprimer ce profil" Style="{StaticResource LienRouge}" Margin="0,0,0,8"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
       <TextBlock Text="DISPOSITION ET SAUVEGARDE" Style="{StaticResource Section}"/>
       <WrapPanel>
+        <Button x:Name="BoutonMasquer" Content="Masquer tous les widgets" Style="{StaticResource Bouton}"
+                ToolTip="Pratique pendant un partage d'écran (aussi avec Win+Alt+H)"/>
         <Button x:Name="BoutonAligner" Content="Aligner tous les widgets" Style="{StaticResource Bouton}"
                 ToolTip="Cale les widgets presque alignés les uns sur les autres, avec des espaces réguliers"/>
         <Button x:Name="BoutonExporter" Content="Exporter ma disposition…" Style="{StaticResource Bouton}"/>

@@ -22,7 +22,9 @@ public abstract class WidgetWindow : Window
     protected static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
     protected static Brush Blanc => Theme.Texte;
     protected static Brush Pale => Theme.TexteDoux;
-    protected static Brush Accent => Theme.Accent;
+    Brush _accentPropre, _fondPropre;
+    protected Brush Accent => _accentPropre ??= Option("_accent", "") is { Length: > 0 } hex ? Theme.Hex(hex) : Theme.Accent;
+    protected Brush FondCarte => _fondPropre ??= Option("_fond", "") is { Length: > 0 } code ? Theme.FondPour(code) : Theme.Fond;
     protected static Brush Alerte => Theme.Alerte;
     protected const string Icones = "Segoe Fluent Icons, Segoe MDL2 Assets";
 
@@ -156,9 +158,15 @@ public abstract class WidgetWindow : Window
         return true;
     }
 
+    void ChangerStyle(string cle, string valeur)
+    {
+        if (valeur == "") Config.Options.Remove(cle); else Config.Options[cle] = valeur;
+        App.Instance.Recreer(this);
+    }
+
     public double Echelle => _echelle;
 
-    public void ChangerEchelle(double echelle) => Redimensionner(echelle, sauver: true);
+    public void ChangerEchelle(double echelle) => Redimensionner(echelle, sauver: true, parUtilisateur: false);
 
     void AppliquerApparence()
     {
@@ -166,11 +174,12 @@ public abstract class WidgetWindow : Window
         Opacity = double.Parse(Option("_opacite", "1"), Inv);
     }
 
-    void Redimensionner(double echelle, bool sauver)
+    void Redimensionner(double echelle, bool sauver, bool parUtilisateur = true)
     {
         _echelle = Math.Clamp(Math.Round(echelle, 2), EchelleMin, EchelleMax);
         if (_racine != null)
             _racine.LayoutTransform = _echelle == 1 ? Transform.Identity : new ScaleTransform(_echelle, _echelle);
+        if (sauver && parUtilisateur) Config.Options.Remove("_voulue");
         if (sauver) SetOption("_taille", _echelle.ToString("0.##", Inv));
     }
 
@@ -203,7 +212,7 @@ public abstract class WidgetWindow : Window
         {
             Width = 28, Height = 28,
             CornerRadius = new CornerRadius(14),
-            Background = Theme.Fond,
+            Background = FondCarte,
             BorderBrush = Theme.Piste,
             BorderThickness = new Thickness(1),
             HorizontalAlignment = HorizontalAlignment.Right,
@@ -215,7 +224,7 @@ public abstract class WidgetWindow : Window
             Child = Glyphe("\uE70F", 12),
         };
         _modifier.MouseEnter += (_, _) => _modifier.Background = Accent;
-        _modifier.MouseLeave += (_, _) => _modifier.Background = Theme.Fond;
+        _modifier.MouseLeave += (_, _) => _modifier.Background = FondCarte;
         _modifier.MouseLeftButtonDown += (_, e) => e.Handled = true;
         _modifier.MouseLeftButtonUp += (_, e) => { e.Handled = true; OuvrirMenu(); };
 
@@ -321,6 +330,22 @@ public abstract class WidgetWindow : Window
         foreach (var (nom, v) in Opacites)
             Coche(nom, v.ToString(Inv) == op, _ => { SetOption("_opacite", v.ToString(Inv)); AppliquerApparence(); }, opacite);
 
+        var couleur = SousMenu("Couleur de ce widget");
+        couleur.Icon = Glyphe("", 13);
+        var accent = Option("_accent", "");
+        Coche("Comme les autres", accent == "", _ => ChangerStyle("_accent", ""), couleur);
+        foreach (var (nom, hex) in Theme.Accents)
+        {
+            var m = Coche(nom, string.Equals(accent, hex, StringComparison.OrdinalIgnoreCase), _ => ChangerStyle("_accent", hex), couleur);
+            m.Icon = new Border { Width = 12, Height = 12, CornerRadius = new CornerRadius(6), Background = Theme.Hex(hex) };
+        }
+
+        var fond = SousMenu("Fond de ce widget");
+        var fondActuel = Option("_fond", "");
+        Coche("Comme les autres", fondActuel == "", _ => ChangerStyle("_fond", ""), fond);
+        foreach (var (nom, code) in Theme.Fonds)
+            Coche(nom, fondActuel == code, _ => ChangerStyle("_fond", code), fond);
+
         Coche("Verrouiller la position et la taille", Verrouille, oui => SetOption("_verrou", oui ? "oui" : "non")).Icon = Glyphe("\uE72E", 13);
     }
 
@@ -364,11 +389,11 @@ public abstract class WidgetWindow : Window
         return m;
     }
 
-    protected static Border Carte(UIElement contenu) => new()
+    protected Border Carte(UIElement contenu) => new()
     {
         Child = contenu,
         CornerRadius = new CornerRadius(Theme.Arrondi),
-        Background = Theme.Fond,
+        Background = FondCarte,
         Padding = new Thickness(18, 12, 18, 14),
         Margin = new Thickness(10),
         Effect = Ombre(),
@@ -429,7 +454,7 @@ public abstract class WidgetWindow : Window
         return Cliquable(b, action);
     }
 
-    protected static (Grid Barre, Border Rempli) Barre(double hauteur = 6)
+    protected (Grid Barre, Border Rempli) Barre(double hauteur = 6)
     {
         var rempli = new Border { Height = hauteur, CornerRadius = new CornerRadius(hauteur / 2), HorizontalAlignment = HorizontalAlignment.Left, Background = Accent, Width = 0 };
         var barre = new Grid();

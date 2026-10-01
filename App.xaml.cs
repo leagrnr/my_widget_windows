@@ -23,7 +23,7 @@ public partial class App : Application
     EventWaitHandle _signal;
     Forms.NotifyIcon _icone;
     GestionnaireWindow _gestionnaire;
-    bool _quitte;
+    bool _quitte, _lectureSeule;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -39,12 +39,23 @@ public partial class App : Application
         DispatcherUnhandledException += (_, ex) => { Journal(ex.Exception); ex.Handled = true; };
         SessionEnding += (_, _) => Sauver();
 
-        Config = ConfigStore.Charger(out bool premierLancement);
+        Config = ConfigStore.Charger(out var etat);
+        bool premierLancement = etat == ConfigStore.Etat.Nouveau;
+        _lectureSeule = etat == ConfigStore.Etat.Indisponible;
         MettreAJourMenus();
         foreach (var c in Config.Widgets.ToList()) Afficher(c);
         CreerIcone();
         RaccourcisClavier.Enregistrer();
         MiseAJour.Demarrer();
+        var regrandir = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
+        regrandir.Tick += (_, _) => Regrandir();
+        regrandir.Start();
+        _dernierClair = Theme.Clair;
+        Microsoft.Win32.SystemEvents.UserPreferenceChanged += (_, _) => Dispatcher.InvokeAsync(VerifierTheme);
+        var horlogeTheme = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
+        horlogeTheme.Tick += (_, _) => VerifierTheme();
+        horlogeTheme.Start();
+        if (_lectureSeule) AttendreReglages();
 
         if (premierLancement)
         {
@@ -75,8 +86,84 @@ public partial class App : Application
         };
         _widgets.Add(w);
         w.Show();
+        if (_masques) w.Hide();
         WidgetsChanged?.Invoke();
     }
+
+    bool _dernierClair, _masques;
+    Forms.ToolStripMenuItem _itemMasquer;
+
+    public bool Masques => _masques;
+
+    void VerifierTheme()
+    {
+        bool clair = Theme.Clair;
+        if (clair == _dernierClair || _quitte) return;
+        _dernierClair = clair;
+        AppliquerStyle();
+    }
+
+    public void BasculerMasquage()
+    {
+        _masques = !_masques;
+        foreach (var w in _widgets.ToList())
+        {
+            if (_masques) w.Hide();
+            else { w.Show(); w.AuFond(); }
+        }
+        if (_itemMasquer != null) _itemMasquer.Text = _masques ? "Afficher les widgets (Win+Alt+H)" : "Masquer les widgets (Win+Alt+H)";
+        WidgetsChanged?.Invoke();
+    }
+
+    public IEnumerable<string> NomsProfils =>
+        new[] { Config.ProfilActif }.Concat(Config.Profils.Keys).Distinct().OrderBy(n => n, StringComparer.CurrentCultureIgnoreCase);
+
+    public void ChangerProfil(string nom)
+    {
+        if (nom == Config.ProfilActif || !Config.Profils.TryGetValue(nom, out var liste)) return;
+        Config.Profils[Config.ProfilActif] = Config.Widgets;
+        Config.Widgets = liste;
+        Config.Profils.Remove(nom);
+        Config.ProfilActif = nom;
+        foreach (var w in _widgets.ToList()) w.Close();
+        Sauver();
+        foreach (var c in Config.Widgets.ToList()) Afficher(c);
+        Notification("Profil", $"Profil « {nom} » activé.");
+    }
+
+    public bool CreerProfil(string nom, bool copierActuel)
+    {
+        if (string.IsNullOrWhiteSpace(nom) || NomsProfils.Contains(nom, StringComparer.CurrentCultureIgnoreCase)) return false;
+        Config.Profils[nom] = copierActuel
+            ? JsonSerializer.Deserialize<List<WidgetConfig>>(JsonSerializer.Serialize(Config.Widgets))
+            : new List<WidgetConfig>();
+        Sauver();
+        ChangerProfil(nom);
+        return true;
+    }
+
+    public bool RenommerProfil(string ancien, string nouveau)
+    {
+        if (string.IsNullOrWhiteSpace(nouveau) || NomsProfils.Contains(nouveau, StringComparer.CurrentCultureIgnoreCase)) return false;
+        if (ancien == Config.ProfilActif) Config.ProfilActif = nouveau;
+        else if (Config.Profils.Remove(ancien, out var liste)) Config.Profils[nouveau] = liste;
+        else return false;
+        Sauver();
+        Notifier();
+        return true;
+    }
+
+    public void SupprimerProfil(string nom)
+    {
+        if (nom == Config.ProfilActif || !Config.Profils.Remove(nom, out var liste)) return;
+        foreach (var c in liste)
+            if (!IdPartage(c)) Coffre.Effacer($"{c.Type}/{c.Id}");
+        Sauver();
+        Notifier();
+    }
+
+    public bool IdPartage(WidgetConfig widget) =>
+        Config.Widgets.Concat(Config.Profils.Values.SelectMany(l => l)).Any(c => c.Id == widget.Id && c != widget);
 
     public void Ajouter(string type)
     {
@@ -116,6 +203,59 @@ public partial class App : Application
         Sauver();
     }
 
+    void Regrandir()
+    {
+        if (_quitte || _lectureSeule || !Config.SansChevauchement) return;
+        if (System.Windows.Input.Mouse.LeftButton == System.Windows.Input.MouseButtonState.Pressed) return;
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        foreach (var w in _widgets.ToList())
+        {
+            if (!w.IsLoaded || w.ActualWidth == 0) continue;
+            if (!w.Config.Options.TryGetValue("_voulue", out var texte) || !double.TryParse(texte, System.Globalization.NumberStyles.Float, inv, out var voulue)) continue;
+            double actuelle = w.Echelle;
+            if (voulue <= actuelle + 0.005) { w.Config.Options.Remove("_voulue"); Sauver(); continue; }
+
+            var zone = w.Zone;
+            var autres = Obstacles(w);
+            var ecrans = Placement.Ecrans(w);
+            double meilleure = actuelle;
+            Rect choix = zone;
+            for (int coin = 0; coin < 4; coin++)
+            {
+                double bas = actuelle, haut = voulue;
+                if (Placement.Libre(Echelonnee(zone, actuelle, coin, voulue), autres, ecrans)) bas = voulue;
+                else
+                    for (int i = 0; i < 14; i++)
+                    {
+                        double milieu = (bas + haut) / 2;
+                        if (Placement.Libre(Echelonnee(zone, actuelle, coin, milieu), autres, ecrans)) bas = milieu; else haut = milieu;
+                    }
+                if (bas > meilleure + 0.004) { meilleure = bas; choix = Echelonnee(zone, actuelle, coin, bas); }
+            }
+            if (meilleure <= actuelle + 0.01) continue;
+
+            meilleure = Math.Floor(meilleure * 100) / 100;
+            if (meilleure >= voulue - 0.005) w.Config.Options.Remove("_voulue");
+            w.ChangerEchelle(meilleure);
+            w.Left += choix.X - zone.X;
+            w.Top += choix.Y - zone.Y;
+            w.Config.X = w.Left;
+            w.Config.Y = w.Top;
+            Sauver();
+        }
+    }
+
+    static Rect Echelonnee(Rect zone, double depart, int coin, double echelle)
+    {
+        const double MargesFixes = 8;
+        double k = echelle / depart;
+        double l = (zone.Width - MargesFixes) * k + MargesFixes;
+        double h = (zone.Height - MargesFixes) * k + MargesFixes;
+        double x = coin is 1 or 3 ? zone.Right - l : zone.Left;
+        double y = coin >= 2 ? zone.Bottom - h : zone.Top;
+        return new Rect(x, y, l, h);
+    }
+
     bool Retrecir(WidgetWindow w, Rect zone, List<Rect> autres, List<Rect> ecrans)
     {
         const double MargesFixes = 8;
@@ -147,6 +287,8 @@ public partial class App : Application
         }
         if (meilleure < WidgetWindow.EchelleMin) return false;
 
+        if (!w.Config.Options.ContainsKey("_voulue"))
+            w.Config.Options["_voulue"] = depart.ToString(System.Globalization.CultureInfo.InvariantCulture);
         w.ChangerEchelle(Math.Floor(meilleure * 100) / 100);
         w.Left += choix.X - zone.X;
         w.Top += choix.Y - zone.Y;
@@ -187,14 +329,42 @@ public partial class App : Application
 
     public void Sauver()
     {
+        if (_lectureSeule) return;
         try { ConfigStore.Sauver(Config); }
         catch (Exception ex) { Journal(ex); }
+    }
+
+    void AttendreReglages()
+    {
+        Notification("Mes Widgets", "Tes réglages ne sont pas encore lisibles. Nouvel essai en cours, rien ne sera effacé.");
+        var minuteur = new DispatcherTimer { Interval = TimeSpan.FromSeconds(10) };
+        minuteur.Tick += (_, _) =>
+        {
+            var config = ConfigStore.EssayerCharger();
+            if (config == null) return;
+            minuteur.Stop();
+            foreach (var w in _widgets.ToList()) w.Close();
+            Config = config;
+            _lectureSeule = false;
+            MettreAJourMenus();
+            foreach (var c in Config.Widgets.ToList()) Afficher(c);
+            Notification("Mes Widgets", "Tes widgets sont de retour.");
+        };
+        minuteur.Start();
     }
 
     public void Notifier() => WidgetsChanged?.Invoke();
 
     public void Notification(string titre, string texte) =>
         _icone?.ShowBalloonTip(6000, titre, texte, Forms.ToolTipIcon.Info);
+
+    public void Recreer(WidgetWindow w)
+    {
+        var c = w.Config;
+        Sauver();
+        w.Close();
+        if (Config.Widgets.Contains(c) && !_widgets.Any(x => x.Config == c)) Afficher(c);
+    }
 
     public void AppliquerStyle()
     {
@@ -226,6 +396,7 @@ public partial class App : Application
     public void ChangerTheme(string theme)
     {
         Config.Theme = theme;
+        _dernierClair = Theme.Clair;
         AppliquerStyle();
     }
 
@@ -281,6 +452,22 @@ public partial class App : Application
             ajouter.DropDownItems.Add(sous);
         }
         menu.Items.Add(ajouter);
+        var profils = new Forms.ToolStripMenuItem("Profil");
+        profils.DropDownItems.Add("(chargement)");
+        profils.DropDownOpening += (_, _) =>
+        {
+            profils.DropDownItems.Clear();
+            foreach (var nom in NomsProfils)
+            {
+                var n = nom;
+                profils.DropDownItems.Add(new Forms.ToolStripMenuItem(n, null, (_, _) => ChangerProfil(n)) { Checked = n == Config.ProfilActif });
+            }
+            profils.DropDownItems.Add(new Forms.ToolStripSeparator());
+            profils.DropDownItems.Add("Gérer les profils…", null, (_, _) => OuvrirGestionnaire());
+        };
+        menu.Items.Add(profils);
+        _itemMasquer = new Forms.ToolStripMenuItem("Masquer les widgets (Win+Alt+H)", null, (_, _) => BasculerMasquage());
+        menu.Items.Add(_itemMasquer);
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("Quitter", null, (_, _) => Quitter());
 
@@ -332,11 +519,15 @@ public partial class App : Application
 
     public static void Journal(Exception ex)
     {
+        var ligne = $"{DateTime.Now:G} {ex}\n\n";
         try
         {
             Directory.CreateDirectory(ConfigStore.Dossier);
-            File.AppendAllText(Path.Combine(ConfigStore.Dossier, "erreurs.log"), $"{DateTime.Now:G} {ex}\n\n");
+            File.AppendAllText(Path.Combine(ConfigStore.Dossier, "erreurs.log"), ligne);
         }
-        catch { }
+        catch
+        {
+            try { File.AppendAllText(Path.Combine(Path.GetTempPath(), "MesWidgets-erreurs.log"), ligne); } catch { }
+        }
     }
 }

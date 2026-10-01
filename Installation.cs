@@ -89,7 +89,11 @@ static class Installation
         Demarrage.Activer(false, Exe);
         try { File.Delete(RaccourciMenu); } catch { }
         Registry.CurrentUser.DeleteSubKeyTree(CleDesinstallation, false);
-        if (reglages) { try { Directory.Delete(ConfigStore.Dossier, true); } catch { } }
+        if (reglages)
+        {
+            try { Directory.Delete(ConfigStore.Dossier, true); } catch { }
+            Registry.CurrentUser.DeleteSubKeyTree(@"Software\MesWidgets", false);
+        }
 
         Process.Start(new ProcessStartInfo("cmd.exe", $"/c timeout /t 2 /nobreak >nul & rmdir /s /q \"{Dossier}\"")
         {
